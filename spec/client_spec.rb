@@ -8,9 +8,9 @@ describe Stomp::Client do
   let(:null_logger) { double("mock Stomp::NullLogger") }
 
   before(:each) do
-    Stomp::NullLogger.stub(:new).and_return(null_logger)
+    allow(Stomp::NullLogger).to receive(:new).and_return(null_logger)
     @mock_connection = double('connection', :autoflush= => true)
-    Stomp::Connection.stub(:new).and_return(@mock_connection)
+    allow(Stomp::Connection).to receive(:new).and_return(@mock_connection)
   end
 
   describe "(created with no params)" do
@@ -20,15 +20,15 @@ describe Stomp::Client do
     end
 
     it "should not return any errors" do
-      lambda {
+      expect {
         @client = Stomp::Client.new
-      }.should_not raise_error
+      }.not_to raise_error
     end
 
     it "should not return any errors when created with the open constructor" do
-      lambda {
+      expect {
         @client = Stomp::Client.open
-      }.should_not raise_error
+      }.not_to raise_error
     end
 
     it_should_behave_like "standard Client"
@@ -43,33 +43,33 @@ describe Stomp::Client do
                                               :port => 12345,
                                               :host => 'dummy host',
                                               :ssl => 'dummy ssl')
-      Stomp::Connection.stub(:new).and_return(@mock_connection)
+      allow(Stomp::Connection).to receive(:new).and_return(@mock_connection)
       @client = Stomp::Client.new
     end
 
     it 'should delegate parameters to its connection' do
       
-      @client.login.should == 'dummy login'
-      @client.passcode.should == 'dummy passcode'
-      @client.port.should == 12345
-      @client.host.should == 'dummy host'
-      @client.ssl.should == 'dummy ssl'
+      expect(@client.login).to eq('dummy login')
+      expect(@client.passcode).to eq('dummy passcode')
+      expect(@client.port).to eq(12345)
+      expect(@client.host).to eq('dummy host')
+      expect(@client.ssl).to eq('dummy ssl')
     end
   end
 
   describe "(autoflush)" do
     it "should delegate to the connection for accessing the autoflush property" do
-      @mock_connection.should_receive(:autoflush)
+      expect(@mock_connection).to receive(:autoflush)
       Stomp::Client.new.autoflush
     end
 
     it "should delegate to the connection for setting the autoflush property" do
-      @mock_connection.should_receive(:autoflush=).with(true)
+      expect(@mock_connection).to receive(:autoflush=).with(true)
       Stomp::Client.new.autoflush = true
     end
 
     it "should set the autoflush property on the connection when passing in autoflush as a parameter to the Stomp::Client" do
-      @mock_connection.should_receive(:autoflush=).with(true)
+      expect(@mock_connection).to receive(:autoflush=).with(true)
       Stomp::Client.new("login", "password", 'localhost', 61613, false, true)
     end
   end
@@ -77,33 +77,33 @@ describe Stomp::Client do
   describe "(created with invalid params)" do
 
     it "should return ArgumentError if port is nil" do
-      lambda {
+      expect {
         @client = Stomp::Client.new('login', 'passcode', 'localhost', nil)
-      }.should raise_error
+      }.to raise_error
     end
 
     it "should return ArgumentError if port is < 1" do
-      lambda {
+      expect {
         @client = Stomp::Client.new('login', 'passcode', 'localhost', 0)
-      }.should raise_error
+      }.to raise_error
     end
 
     it "should return ArgumentError if port is > 65535" do
-      lambda {
+      expect {
         @client = Stomp::Client.new('login', 'passcode', 'localhost', 65536)
-      }.should raise_error
+      }.to raise_error
     end
 
     it "should return ArgumentError if port is empty" do
-      lambda {
+      expect {
         @client = Stomp::Client.new('login', 'passcode', 'localhost', '')
-      }.should raise_error
+      }.to raise_error
     end
 
     it "should return ArgumentError if reliable is something other than true or false" do
-      lambda {
+      expect {
         @client = Stomp::Client.new('login', 'passcode', 'localhost', '12345', 'foo')
-      }.should raise_error
+      }.to raise_error
     end
 
   end
@@ -115,7 +115,7 @@ describe Stomp::Client do
     end
 
     it "should properly parse the URL provided" do
-      Stomp::Connection.should_receive(:new).with(:hosts => [{:login => 'testlogin',
+      expect(Stomp::Connection).to receive(:new).with(:hosts => [{:login => 'testlogin',
                                                               :passcode => 'testpassword',
                                                               :host => 'localhost',
                                                               :port => 12345}],
@@ -134,7 +134,7 @@ describe Stomp::Client do
     end
 
     it "should properly parse the URL provided" do
-      Stomp::Connection.should_receive(:new).with(:hosts => [{:login => '',
+      expect(Stomp::Connection).to receive(:new).with(:hosts => [{:login => '',
                                                               :passcode => '',
                                                               :host => 'foobar',
                                                               :port => 12345}],
@@ -154,7 +154,7 @@ describe Stomp::Client do
     end
 
     it "should properly parse the URL provided" do
-      Stomp::Connection.should_receive(:new).with(:hosts => [{:login => '',
+      expect(Stomp::Connection).to receive(:new).with(:hosts => [{:login => '',
                                                               :passcode => '',
                                                               :host => 'foo-bar',
                                                               :port => 12345}],
@@ -174,7 +174,7 @@ describe Stomp::Client do
     end
 
     it "should properly parse the URL provided" do
-      Stomp::Connection.should_receive(:new).with(:hosts => [{:login => 'test-login',
+      expect(Stomp::Connection).to receive(:new).with(:hosts => [{:login => 'test-login',
                                                               :passcode => 'testpasscode',
                                                               :host => 'foobar',
                                                               :port => 12345}],
@@ -194,7 +194,7 @@ describe Stomp::Client do
     end
 
     it "should properly parse the URL provided" do
-      Stomp::Connection.should_receive(:new).with(:hosts => [{:login => 'test-login',
+      expect(Stomp::Connection).to receive(:new).with(:hosts => [{:login => 'test-login',
                                                               :passcode => 'testpasscode',
                                                               :host => 'foo-bar',
                                                               :port => 12345}],
@@ -217,7 +217,7 @@ describe Stomp::Client do
     end
 
     it "should properly parse the URL provided" do
-      Stomp::Connection.should_receive(:new).with(:hosts => [{:login => '',
+      expect(Stomp::Connection).to receive(:new).with(:hosts => [{:login => '',
                                                               :passcode => '',
                                                               :host => 'host.foobar.com',
                                                               :port => 12345}],
@@ -237,7 +237,7 @@ describe Stomp::Client do
     end
 
     it "should properly parse the URL provided" do
-      Stomp::Connection.should_receive(:new).with(:hosts => [{:login => 'testlogin',
+      expect(Stomp::Connection).to receive(:new).with(:hosts => [{:login => 'testlogin',
                                                               :passcode => 'testpasscode',
                                                               :host => 'host.foobar.com',
                                                               :port => 12345}],
@@ -274,10 +274,10 @@ describe Stomp::Client do
 
       @parameters.merge!({:logger => null_logger})
       
-      Stomp::Connection.should_receive(:new).with(@parameters)
+      expect(Stomp::Connection).to receive(:new).with(@parameters)
       
       client = Stomp::Client.new(url)
-      client.parameters.should == @parameters
+      expect(client.parameters).to eq(@parameters)
     end
     
     it "should properly parse a URL with failover:" do
@@ -291,10 +291,10 @@ describe Stomp::Client do
       
       @parameters.merge!({:logger => null_logger})
       
-      Stomp::Connection.should_receive(:new).with(@parameters)
+      expect(Stomp::Connection).to receive(:new).with(@parameters)
       
       client = Stomp::Client.new(url)
-      client.parameters.should == @parameters
+      expect(client.parameters).to eq(@parameters)
     end
     
     it "should properly parse a URL without user and password" do
@@ -307,10 +307,10 @@ describe Stomp::Client do
       
       @parameters.merge!({:logger => null_logger})
       
-      Stomp::Connection.should_receive(:new).with(@parameters)
+      expect(Stomp::Connection).to receive(:new).with(@parameters)
       
       client = Stomp::Client.new(url)
-      client.parameters.should == @parameters
+      expect(client.parameters).to eq(@parameters)
     end
     
     it "should properly parse a URL with user and/or password blank" do
@@ -323,10 +323,10 @@ describe Stomp::Client do
       
       @parameters.merge!({:logger => null_logger})
       
-      Stomp::Connection.should_receive(:new).with(@parameters)
+      expect(Stomp::Connection).to receive(:new).with(@parameters)
       
       client = Stomp::Client.new(url)
-      client.parameters.should == @parameters
+      expect(client.parameters).to eq(@parameters)
     end
     
     it "should properly parse a URL with the options query" do
@@ -354,10 +354,10 @@ describe Stomp::Client do
       
       @parameters.merge!({:logger => null_logger})
       
-      Stomp::Connection.should_receive(:new).with(@parameters)
+      expect(Stomp::Connection).to receive(:new).with(@parameters)
       
       client = Stomp::Client.new(url)
-      client.parameters.should == @parameters
+      expect(client.parameters).to eq(@parameters)
     end
     
   end
