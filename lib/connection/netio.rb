@@ -32,7 +32,7 @@ module Stomp
         #
         return nil if line.nil?
         #An extra \n at the beginning of the 
-        line = '' if line = "\n"
+        line = '' if line == "\n"
         # p [ "wiredatain_01", line ]
         line = _normalize_line_end(line) if @protocol >= Stomp::SPL_12
         # If the reading hangs for more than X seconds, abort the parsing process.
