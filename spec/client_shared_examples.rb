@@ -11,24 +11,24 @@ shared_examples_for "standard Client" do
 
   describe "the closed? method" do
     it "should be false when the connection is open" do
-      @mock_connection.stub!(:closed?).and_return(false)
+      @mock_connection.stub(:closed?).and_return(false)
       @client.closed?.should == false
     end
 
     it "should be true when the connection is closed" do
-      @mock_connection.stub!(:closed?).and_return(true)
+      @mock_connection.stub(:closed?).and_return(true)
       @client.closed?.should == true
     end
   end
 
   describe "the open? method" do
     it "should be true when the connection is open" do
-      @mock_connection.stub!(:open?).and_return(true)
+      @mock_connection.stub(:open?).and_return(true)
       @client.open?.should == true
     end
 
     it "should be false when the connection is closed" do
-      @mock_connection.stub!(:open?).and_return(false)
+      @mock_connection.stub(:open?).and_return(false)
       @client.open?.should == false
     end
   end
@@ -36,7 +36,7 @@ shared_examples_for "standard Client" do
   describe "the subscribe method" do
 
     before(:each) do
-      @mock_connection.stub!(:subscribe).and_return(true)
+      @mock_connection.stub(:subscribe).and_return(true)
     end
 
     it "should raise RuntimeError if not passed a block" do

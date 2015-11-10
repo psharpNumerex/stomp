@@ -6,3 +6,8 @@ lib_path = File.expand_path("#{dir}/../lib")
 $LOAD_PATH.unshift lib_path unless $LOAD_PATH.include?(lib_path)
 
 require 'stomp'
+
+
+#RSpec.configure do |rspec|
+#  rspec.raise_errors_for_deprecations!
+#end

@@ -43,8 +43,8 @@ describe Stomp::Connection do
     # clone() does a shallow copy, we want a deep one so we can garantee the hosts order
     normal_parameters = Marshal::load(Marshal::dump(@parameters))
 
-    @tcp_socket = mock(:tcp_socket, :close => nil, :puts => nil, :write => nil, :setsockopt => nil, :flush => true)
-    TCPSocket.stub!(:open).and_return @tcp_socket
+    @tcp_socket = double(:tcp_socket, :close => nil, :puts => nil, :write => nil, :setsockopt => nil, :flush => true)
+    TCPSocket.stub(:open).and_return @tcp_socket
     @connection = Stomp::Connection.new(normal_parameters)
   end
 
@@ -130,18 +130,18 @@ describe Stomp::Connection do
       it "should be false if reliable is set to false" do
         hash = @parameters.merge({:reliable => false })
         connection = Stomp::Connection.new(hash)
-        connection.instance_variable_get(:@reliable).should be_false
+        connection.instance_variable_get(:@reliable).should be_falsey
       end
       
       it "should be true if reliable is set to true" do
         hash = @parameters.merge({:reliable => true })
         connection = Stomp::Connection.new(hash)
-        connection.instance_variable_get(:@reliable).should be_true
+        connection.instance_variable_get(:@reliable).should be_truthy
       end
       
       it "should be true if reliable is not set" do
         connection = Stomp::Connection.new(@parameters)
-        connection.instance_variable_get(:@reliable).should be_true
+        connection.instance_variable_get(:@reliable).should be_truthy
       end
     end
     
@@ -284,9 +284,9 @@ describe Stomp::Connection do
       
       before(:each) do
         ssl_parameters = {:hosts => [{:login => "login2", :passcode => "passcode2", :host => "remotehost", :ssl => true}]}
-        @ssl_socket = mock(:ssl_socket, :puts => nil, :write => nil, 
+        @ssl_socket = double(:ssl_socket, :puts => nil, :write => nil, 
           :setsockopt => nil, :flush => true)
-        @ssl_socket.stub!(:sync_close=)
+        @ssl_socket.stub(:sync_close=)
         
         TCPSocket.should_receive(:open).and_return @tcp_socket
         OpenSSL::SSL::SSLSocket.should_receive(:new).and_return(@ssl_socket)
@@ -425,11 +425,11 @@ describe Stomp::Connection do
   describe "when closing a socket" do
     it "should close the tcp connection" do
       @tcp_socket.should_receive(:close)
-      @connection.__send__(:close_socket).should be_true # Use Object.__send__
+      @connection.__send__(:close_socket).should be_truthy # Use Object.__send__
     end
     it "should ignore exceptions" do
       @tcp_socket.should_receive(:close).and_raise "exception"
-      @connection.__send__(:close_socket).should be_true # Use Object.__send__
+      @connection.__send__(:close_socket).should be_truthy # Use Object.__send__
     end
   end
 
@@ -438,11 +438,11 @@ describe Stomp::Connection do
       host = @parameters[:hosts][0]
       @connection = Stomp::Connection.new(host[:login], host[:passcode], host[:host], host[:port], reliable = true, 5, connect_headers = {})
       @connection.instance_variable_set(:@connection_attempts, 10000)
-      @connection.send(:max_reconnect_attempts?).should be_false
+      @connection.send(:max_reconnect_attempts?).should be_falsey
     end
     it "should return false if max_reconnect_attempts = 0" do
       @connection.instance_variable_set(:@connection_attempts, 10000)
-      @connection.send(:max_reconnect_attempts?).should be_false
+      @connection.send(:max_reconnect_attempts?).should be_falsey
     end
     it "should return true if connection attempts > max_reconnect_attempts" do
       limit = 10000
@@ -450,10 +450,10 @@ describe Stomp::Connection do
       @connection = Stomp::Connection.new(@parameters)
       
       @connection.instance_variable_set(:@connection_attempts, limit-1)
-      @connection.send(:max_reconnect_attempts?).should be_false
+      @connection.send(:max_reconnect_attempts?).should be_falsey
       
       @connection.instance_variable_set(:@connection_attempts, limit)
-      @connection.send(:max_reconnect_attempts?).should be_true
+      @connection.send(:max_reconnect_attempts?).should be_truthy
     end
     # These should be raised for the user to deal with
     it "should not rescue MaxReconnectAttempts" do

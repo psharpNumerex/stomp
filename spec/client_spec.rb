@@ -47,14 +47,13 @@ describe Stomp::Client do
       @client = Stomp::Client.new
     end
 
-    describe 'it should delegate parameters to its connection' do
-      subject { @client }
-
-      its(:login) { should eql 'dummy login' }
-      its(:passcode) { should eql 'dummy passcode' }
-      its(:port) { should eql 12345 }
-      its(:host) { should eql 'dummy host' }
-      its(:ssl) { should eql 'dummy ssl' }
+    it 'should delegate parameters to its connection' do
+      
+      @client.login.should == 'dummy login'
+      @client.passcode.should == 'dummy passcode'
+      @client.port.should == 12345
+      @client.host.should == 'dummy host'
+      @client.ssl.should == 'dummy ssl'
     end
   end
 

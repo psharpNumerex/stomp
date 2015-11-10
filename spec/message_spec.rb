@@ -9,7 +9,7 @@ describe Stomp::Message do
     context 'with invalid parameters' do
       it 'should return an empty message when receiving an empty string or nil parameter' do
         message = Stomp::Message.new('')
-        message.should be_empty
+        message.send(:empty?).should be_truthy
       end
 
       it 'should raise Stomp::Error::InvalidFormat when receiving a invalid formated message' do
