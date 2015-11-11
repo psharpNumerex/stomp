@@ -31,7 +31,7 @@ module Stomp
         end
         #
         return nil if line.nil?
-        #An extra \n at the beginning of the 
+        #An extra \n at the beginning of the frame, possibly not caught by is_ready?
         line = '' if line == "\n"
         # p [ "wiredatain_01", line ]
         line = _normalize_line_end(line) if @protocol >= Stomp::SPL_12
